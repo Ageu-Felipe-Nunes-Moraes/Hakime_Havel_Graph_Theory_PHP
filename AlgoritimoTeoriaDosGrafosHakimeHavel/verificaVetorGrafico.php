@@ -3,63 +3,78 @@
 
 //Hakime Havel
 
-function reorganizar_vetor($vetor){ // Organiza a lista em ordem decrescente
-    rsort($vetor);
-    return $vetor;
-}
+class HakimeHavel{
 
-function mostra_vetor($vetor){
-    echo "[" . implode(", ", $vetor) . "]\n";
-}
+    public function __construct(){
+        $this->counter = 0; # Counter to help
+        $this->highestValue = 0;// Get the highest value of vector
+    }
 
-// Função que verifica se é um vetor gráfico por meio dos princípios de Hakime Havel
-function vetor_grafico($vetor){
-    $contador = 0;
-    $maior_valor = 0;// Vai receber o maior valor do vetor
-    $vetor_decrescente = reorganizar_vetor($vetor);
+    public function rearrangeVector($vector){ // Rearrange list in decrescente order
+        rsort($vector);
+        return $vector;
+    }
 
-    // APLICANDO TODAS AS ITERAÇÕES NECESSÁRIAS PARA CHEGAR A UMA CONCLUSÃO SATISFATÓRIA
-    // Verificando se há algum vértice de grau maior que o tamanho do vetor
-    if (count($vetor_decrescente) > $vetor_decrescente[0]){
-        mostra_vetor($vetor_decrescente);
-        for ($i = 0; $i < count($vetor); $i++){
-            $maior_valor = $vetor_decrescente[0];
-            array_shift($vetor_decrescente); // Deleta o primeiro item do vetor
-            for ($j = 0; $j < $maior_valor; $j++){
-                $vetor_decrescente[$j] = $vetor_decrescente[$j] - 1; // Subtrai 1 de cada posição
-            }
-            mostra_vetor($vetor_decrescente);
-            $vetor_decrescente = reorganizar_vetor($vetor_decrescente);
-            mostra_vetor($vetor_decrescente);
-            if ($vetor_decrescente[0] == 0){ // Verifica se a primeira posição é igual a "0"
-                for ($k = 0; $k < count($vetor_decrescente); $k++){
-                    if ($vetor_decrescente[$k] == 0){ // Verfica se todas as outras posições também são iguais a "0"
-                        $contador += 1;
-                        if ($contador == count($vetor_decrescente)){ // Cofere a contagem dos zeros
-                            echo "É um vetor gráfico: ";
-                            mostra_vetor($vetor_decrescente);
-                            break;
-                        }
-                    }
-                    if ($vetor_decrescente[$k] == -1){ // Verifica se há algum valor dentro do vetor igual a "-1"
-                        echo "Não é um vetor gráfico: ";
-                        mostra_vetor($vetor_decrescente);
-                        break;
-                    }
+    public function showVector($vector){ // Print in the terminal
+        echo "[" . implode(", ", $vector) . "]\n";
+    }
+
+    public function subtractPositions($vector){
+        for ($j = 0; $j < $this->highestValue; $j++){
+            $vector[$j] = $vector[$j] - 1; // Will subtract 1 from each position
+        }
+        return $vector;
+    }
+
+    public function checksPostion($vector){ // Checks whether it is a vector graphic or not
+        for ($k = 0; $k < count($vector); $k++){
+            if ($vector[$k] == 0){ // # Checks if all the other positions are equal to the zero as well
+                $this->counter += 1;
+                if ($this->counter == count($vector)){ // Checks the counting of zeros
+                    echo "É um vetor gráfico: ";
+                    $this->showVector($vector);
+                    break;
                 }
+            }
+            if ($vector[$k] == -1){ // # Checks if there is any value in the from vector that is equal to "-1"
+                echo "Não é um vetor gráfico: ";
+                $this->showVector($vector);
                 break;
             }
         }
-    }else{
-        echo "\nTipo de lista inválida\n";
+    }
+
+    // The function that checks if is a graphic vector using Hakime Havel's principles
+    public function graphicVector($vector){
+        $decrescenteVector = $this->rearrangeVector($vector);
+        // Applying all necessary iterations to reach a satisfactory conclusion
+        // Checks if there is any vertices with a degree greater than the size of the vector
+        if (count($decrescenteVector) > $decrescenteVector[0]){
+            $this->showVector($decrescenteVector);
+            for ($i = 0; $i < count($vector); $i++){
+                $this->highestValue = $decrescenteVector[0];
+                array_shift($decrescenteVector); // Deletes the first item from the vector
+                $vectorSubtract = $this->subtractPositions($decrescenteVector);
+                $this->showVector($vectorSubtract);
+                $decrescenteVector = $this->rearrangeVector($vectorSubtract);
+                $this->showVector($decrescenteVector);
+                if ($decrescenteVector[0] == 0){ // Checks if the first position is "0"
+                    $this-> checksPostion($decrescenteVector);
+                    break;
+                }
+            }
+        }else{
+            echo "\nTipo de lista inválida\n";
+        }
     }
 }
 
-vetor_grafico(array(3,2,2,2,2)); // Lista de entrada
+$hakime = new HakimeHavel();
+$hakime->graphicVector(array(3,2,2,2,2)); // # input list
 
-//valor teste = 3,2,2,2,2
+//test value = 3,2,2,2,2
 
-//não gráfico
+//not graphic
 //[6, 5, 4, 4, 4, 4, 4, 2]
 //[4, 3, 3, 3, 3, 3, 2]
 //[2, 2, 2, 2, 3, 2]
@@ -73,7 +88,7 @@ vetor_grafico(array(3,2,2,2,2)); // Lista de entrada
 //[-1, 0]
 //[0, -1]
 
-// gráfico
+// it's graphic
 //[5, 4, 3, 3, 3, 3, 3, 2]
 //[3, 2, 2, 2, 2, 3, 2]
 //[3, 3, 2, 2, 2, 2, 2]
